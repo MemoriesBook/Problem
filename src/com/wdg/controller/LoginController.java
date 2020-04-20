@@ -37,8 +37,7 @@ public class LoginController {
 		if (login) {
 			User_reg user = service.getNameService(u.getUser());
 			Integer grade = user.getGrade();
-			session.setAttribute("id", u.getId());
-			session.setAttribute("username", u.getUser());
+			session.setAttribute("username", u.getUser());//这里user中没有id
 			session.setAttribute("grade", grade);
 			return "redirect:admin/welcome.action";
 

@@ -5,11 +5,13 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.wdg.bean.Log;
+import com.wdg.dao.LogDao;
 import com.wdg.dao.impl.LogDaoImpl;
 
 public class LogInterceptor implements HandlerInterceptor {
@@ -19,15 +21,6 @@ public class LogInterceptor implements HandlerInterceptor {
 			throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("afterCompletion");
-		Date date = new Date();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-		Log log = new Log();
-		log.setLoginTime(dateFormat.format(date).toString());
-		log.setName(request.getSession().getAttribute("username").toString());
-		log.setId(Integer.parseInt(request.getSession().getAttribute("id").toString()));
-		LogDaoImpl dao = new LogDaoImpl();
-		System.out.println(log.getName() + log.getId());
-		dao.insertLog(log);
 	}
 
 	@Override
@@ -41,6 +34,16 @@ public class LogInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("preHandle");
+		Log log = new Log();
+		Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+		log.setLoginTime(dateFormat.format(date).toString());
+		HttpSession session = request.getSession();//重要:此处要进行初始化,否则request.getSession().getAttribute可能会报空指针
+		log.setName(session.getAttribute("username").toString());
+		LogDao dao = new LogDaoImpl();
+		log.setId(dao.getId(session.getAttribute("username").toString()));
+		dao.insertLog(log);
+		System.out.println("登陆日志添加成功");
 		return true;
 	}
 
