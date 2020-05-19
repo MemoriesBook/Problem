@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.river.mapper.PersonCardMapper">
+	<select id="findPersonCard" resultType="PersonCard">
+		select tb_person.*, tb_idcard.`code` from tb_person,tb_idcard where tb_person.card_id=tb_idcard.id
+	</select>
+	<select id="findPersonCardMapper" resultMap="PersonCard_Mapper">
+		select tb_person.*, tb_idcard.`code` from tb_person,tb_idcard where tb_person.card_id=tb_idcard.id
+	</select>
+	<resultMap type="PersonCardPojo" id="PersonCard_Mapper">
+		<!-- 主表 -->
+		<id column="id" property="person.id" />
+		<result column="name" property="person.name" />
+		<result column="age" property="person.age" />
+		<!-- 关联表 -->
+		<association property="idCard" javaType="pers.river.pojo.Idcard">
+			<id column="id" property="person.id" />
+			<result column="card_id" property="id" />
+			<result column="code" property="code" />
+		</association>
+	</resultMap>
+</mapper>
